@@ -57,7 +57,7 @@ type DPSProxy struct {
 	Location string
 	Carrier  string
 	Expire   time.Duration
-	url      *url.URL
+	Url      *url.URL
 }
 
 func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProtocol, extra map[string]string) ([]DPSProxy, error) {
@@ -98,7 +98,7 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 			Location: strings.TrimSpace(parts[2]),
 			Carrier:  strings.TrimSpace(parts[4]),
 			Expire:   time.Duration(t) * time.Second,
-			url:      u,
+			Url:      u,
 		}
 	}
 
