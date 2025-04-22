@@ -71,6 +71,7 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 		"f_et":      "1",
 		"f_carrier": "1",
 		"f_auth":    "1",
+		"format":    "json",
 	}
 	for k, v := range extra {
 		params[k] = v
