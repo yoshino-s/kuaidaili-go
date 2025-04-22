@@ -56,7 +56,7 @@ func (c *DPSOrderClient) CheckValid(ctx context.Context, ipToCheck []string) (ma
 type DPSProxy struct {
 	Location string
 	Carrier  string
-	Expire   time.Duration
+	Expire   time.Time
 	Url      *url.URL
 }
 
@@ -97,7 +97,7 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 		result[i] = DPSProxy{
 			Location: strings.TrimSpace(parts[2]),
 			Carrier:  strings.TrimSpace(parts[4]),
-			Expire:   time.Duration(t) * time.Second,
+			Expire:   time.Now().Add(time.Duration(t) * time.Second),
 			Url:      u,
 		}
 	}
