@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -52,13 +53,24 @@ func (c *DPSOrderClient) CheckValid(ctx context.Context, ipToCheck []string) (ma
 	return res, nil
 }
 
-func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProtocol, extra map[string]string) ([]*url.URL, error) {
+type DPSProxy struct {
+	Location string
+	Carrier  string
+	Expire   time.Duration
+	url      *url.URL
+}
+
+func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProtocol, extra map[string]string) ([]DPSProxy, error) {
 	var res struct {
 		List []string `json:"proxy_list"`
 	}
 	params := map[string]string{
-		"num": fmt.Sprint(num),
-		"pt":  fmt.Sprint(protocol),
+		"num":       fmt.Sprint(num),
+		"pt":        fmt.Sprint(protocol),
+		"f_loc":     "1",
+		"f_et":      "1",
+		"f_carrier": "1",
+		"f_auth":    "1",
 	}
 	for k, v := range extra {
 		params[k] = v
@@ -73,13 +85,21 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 		protocolStr = "socks5"
 	}
 
-	result := make([]*url.URL, len(res.List))
-	for i, proxy := range res.List {
-		u, err := url.Parse(fmt.Sprintf("%s://%s", protocolStr, proxy))
+	result := make([]DPSProxy, len(res.List))
+	for i, item := range res.List {
+		parts := strings.Split(item, ",")
+
+		u, err := url.Parse(fmt.Sprintf("%s://%s@%s", protocolStr, strings.TrimSpace(parts[1]), strings.TrimSpace(parts[0])))
 		if err != nil {
 			return nil, err
 		}
-		result[i] = u
+		t, _ := strconv.Atoi(strings.TrimSpace(parts[3]))
+		result[i] = DPSProxy{
+			Location: strings.TrimSpace(parts[2]),
+			Carrier:  strings.TrimSpace(parts[4]),
+			Expire:   time.Duration(t) * time.Second,
+			url:      u,
+		}
 	}
 
 	return result, nil
