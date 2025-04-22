@@ -60,7 +60,7 @@ type DPSProxy struct {
 	Url      *url.URL
 }
 
-func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProtocol, extra map[string]string) ([]DPSProxy, error) {
+func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProtocol, extra map[string]string) ([]*DPSProxy, error) {
 	var res struct {
 		List []string `json:"proxy_list"`
 	}
@@ -86,7 +86,7 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 		protocolStr = "socks5"
 	}
 
-	result := make([]DPSProxy, len(res.List))
+	result := make([]*DPSProxy, len(res.List))
 	for i, item := range res.List {
 		parts := strings.Split(item, ",")
 
@@ -95,7 +95,7 @@ func (c *DPSOrderClient) GetDPS(ctx context.Context, num int, protocol ProxyProt
 			return nil, err
 		}
 		t, _ := strconv.Atoi(strings.TrimSpace(parts[3]))
-		result[i] = DPSProxy{
+		result[i] = &DPSProxy{
 			Location: strings.TrimSpace(parts[2]),
 			Carrier:  strings.TrimSpace(parts[4]),
 			Expire:   time.Now().Add(time.Duration(t) * time.Second),
