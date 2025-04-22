@@ -137,8 +137,6 @@ func (client *BaseClient) getBaseRes(ctx context.Context, method string, _endpoi
 
 	if response != nil {
 		if err := json.Unmarshal([]byte(data), response); err != nil {
-			fmt.Printf("data: %+v\n", data)
-			fmt.Printf("err: %+v\n", err)
 			return errors.New("fail to parse result content: " + bodyString)
 		}
 	}
