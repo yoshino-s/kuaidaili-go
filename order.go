@@ -22,9 +22,9 @@ type OrderClient struct {
 	*BaseClient
 }
 
-func NewOrderClient(secretID, secretKey string) *OrderClient {
+func NewOrderClient(secretID, secretKey string, opts ...WithOption) *OrderClient {
 	return &OrderClient{
-		BaseClient: newClient(secretID, secretKey),
+		BaseClient: newClient(secretID, secretKey, opts...),
 	}
 }
 

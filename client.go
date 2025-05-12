@@ -30,7 +30,7 @@ func newClient(secretID, secretKey string, options ...WithOption) *BaseClient {
 		secretID:  secretID,
 		secretKey: secretKey,
 
-		http: &http.Client{},
+		http: http.DefaultClient,
 		sign: SignTypeHmacSha1,
 	}
 	for _, option := range options {

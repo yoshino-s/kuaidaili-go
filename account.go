@@ -9,9 +9,9 @@ type AccountClient struct {
 	*BaseClient
 }
 
-func NewAccountClient(secretID, secretKey string) *AccountClient {
+func NewAccountClient(secretID, secretKey string, opts ...WithOption) *AccountClient {
 	return &AccountClient{
-		BaseClient: newClient(secretID, secretKey),
+		BaseClient: newClient(secretID, secretKey, opts...),
 	}
 }
 
@@ -30,7 +30,7 @@ func (client *AccountClient) GetAccountBalance(ctx context.Context) (float64, er
 	return balance, nil
 }
 
-func (client *AccountClient) GetOrderClient(ctx context.Context, orderId string) (*OrderClient, error) {
+func (client *AccountClient) GetOrderClient(ctx context.Context, orderId string, opts ...WithOption) (*OrderClient, error) {
 	var res struct {
 		SecretID  string `json:"secret_id"`
 		SecretKey string `json:"secret_key"`
@@ -42,7 +42,7 @@ func (client *AccountClient) GetOrderClient(ctx context.Context, orderId string)
 		return nil, err
 	}
 
-	return NewOrderClient(res.SecretID, res.SecretKey), nil
+	return NewOrderClient(res.SecretID, res.SecretKey, opts...), nil
 }
 
 type GetAccountOrdersRequest struct {
